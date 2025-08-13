@@ -22,9 +22,12 @@ def run():
         lottery_numbers,
         min_score=10,
         max_iterations=100000000,
+        SUM_MIN=SUM_MIN,
+        SUM_MAX=SUM_MAX,
         MAX_MAIN_GAP_THRESHOLD=MAX_MAIN_GAP_THRESHOLD,
         MAX_LUCKY_GAP_THRESHOLD=MAX_LUCKY_GAP_THRESHOLD,
         MAX_MULTIPLES_ALLOWED=MAX_MULTIPLES_ALLOWED,
+        ODD_RANGE=ODD_RANGE,
         PATTERN_PROB_THRESHOLD=8,
         debug=False,
     )
