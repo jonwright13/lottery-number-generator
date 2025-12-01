@@ -37,6 +37,7 @@ The generator aims to find valid lottery number combinations that have a higher 
   - `pandas`
   - `numpy`
   - `tqdm`
+  - `numpy`
 
 Install dependencies via:
 ```pip install -r requirements.txt```

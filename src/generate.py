@@ -69,6 +69,7 @@ def generate_valid_number_set(
     best_score = 0
     best_combination = None
     best_pattern_prob = None
+    best_iteration = 0
 
     for iteration in trange(1, max_iterations + 1, desc="Generating"):
         main_nums = generate_unique_numbers(
@@ -194,15 +195,15 @@ def generate_valid_number_set(
 
         pattern_prob = generate_pattern_probabilities(probs)
 
-        if (
-            pattern_prob["5_main+1_lucky_special_1"] < PATTERN_PROB_THRESHOLD
-            or pattern_prob["5_main+1_lucky_special_2"] < PATTERN_PROB_THRESHOLD
-        ):
-            iteration_check_dict["pattern_prob_threshold"] += 1
-            tried_combined_combinations.add(combined_tuple)
-            if debug:
-                print(f"Iteration {iteration}: pattern_prob_threshold hit. Retrying...")
-            continue
+        # if (
+        #     pattern_prob["5_main+1_lucky_special_1"] < PATTERN_PROB_THRESHOLD
+        #     or pattern_prob["5_main+1_lucky_special_2"] < PATTERN_PROB_THRESHOLD
+        # ):
+        #     iteration_check_dict["pattern_prob_threshold"] += 1
+        #     tried_combined_combinations.add(combined_tuple)
+        #     if debug:
+        #         print(f"Iteration {iteration}: pattern_prob_threshold hit. Retrying...")
+        #     continue
 
         avg_score = sum(probs) / len(probs)
 
@@ -210,6 +211,7 @@ def generate_valid_number_set(
             best_score = avg_score
             best_combination = combined_tuple
             best_pattern_prob = pattern_prob
+            best_iteration = iteration
 
         if avg_score >= min_score:
             print(
@@ -217,5 +219,7 @@ def generate_valid_number_set(
             )
             return best_combination, best_score, best_pattern_prob
 
-    print(f"Max iterations reached. Best score so far: {best_score:.2f}%")
+    print(
+        f"Max iterations reached. Best score so far: {best_score:.2f}%. Found at iteration {best_iteration}"
+    )
     return best_combination, best_score, best_pattern_prob

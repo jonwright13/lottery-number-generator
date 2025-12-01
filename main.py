@@ -20,7 +20,7 @@ def run():
 
     best_combination, best_score, pattern_prob = generate_valid_number_set(
         lottery_numbers,
-        min_score=10,
+        min_score=5,
         max_iterations=100000000,
         SUM_MIN=SUM_MIN,
         SUM_MAX=SUM_MAX,

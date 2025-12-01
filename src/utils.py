@@ -1,4 +1,4 @@
-import requests, random
+import requests, random, csv
 from bs4 import BeautifulSoup
 from io import StringIO
 import pandas as pd
@@ -8,19 +8,33 @@ def get_latest_lottery_numbers():
     """
     Download and parse the latest lottery numbers as a list of zero-padded string tuples.
     Each tuple has 7 elements: 5 main numbers + 2 lucky stars, all zero-padded strings.
+    If unable to fetch from the website, load from local CSV backup.
     """
     url = "https://lottery.merseyworld.com/cgi-bin/lottery?days=20&Machine=Z&Ballset=0&order=1&show=1&year=0&display=CSV"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    pre_tag = soup.find("pre")
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        pre_tag = soup.find("pre")
 
-    if not pre_tag:
-        raise RuntimeError("Could not find lottery data on the page.")
+        if not pre_tag:
+            raise RuntimeError("Could not find lottery data on the page.")
 
-    csv_text = pre_tag.get_text()
-    df = pd.read_csv(StringIO(csv_text), header=1)
-    df = df.iloc[:-2]  # Remove footer rows
-    df.columns = df.columns.str.strip()
+        csv_text = pre_tag.get_text()
+        df = pd.read_csv(StringIO(csv_text), header=1)
+        df = df.iloc[:-2]  # Remove footer rows
+        df.columns = df.columns.str.strip()
+
+        # Save to CSV after setting column names
+        df.to_csv("lottery_numbers_backup.csv", index=False)
+
+    except Exception as e:
+        print(f"Failed to fetch lottery data from website: {e}")
+        print("Loading lottery data from backup CSV file.")
+
+        try:
+            df = pd.read_csv("lottery_numbers_backup.csv")
+        except FileNotFoundError as e:
+            raise FileNotFoundError("File not found. Aborting")
 
     lottery_numbers = []
     for _, row in df.iterrows():
@@ -169,3 +183,7 @@ def generate_pattern_probabilities(probs):
         pattern_prob[key] = avg_score
 
     return pattern_prob
+
+
+if __name__ == "__main__":
+    get_latest_lottery_numbers()
